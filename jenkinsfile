@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         APP_ENV    = 'uat'
-        IMAGE_NAME = 'beniko123/py-feb27'
+        IMAGE_NAME = 'mbahafru/py-feb27'
         
     }
 
@@ -57,13 +57,16 @@ pipeline {
             }
         }
 
-        stage('Kube Testing') {
+        stage('Kube Testing') { 
+            agent { label 'kube' }
+
             steps {
                 echo "Checking Kubernetes pods..."
                 sh 'kubectl get pods'
             }
         }
         stage('Deploy - Template and Apply') {
+             agent { label 'kube' }
         steps {
             sh '''
             export IMAGE_TAG=$BUILD_NUMBER
@@ -74,6 +77,7 @@ pipeline {
     }
 
         stage('Deploy to Kubernetes') {
+             agent { label 'kube' }
             steps {
                 echo "Deploying to Kubernetes..."
            
@@ -86,7 +90,7 @@ pipeline {
         stage('Test Deployment') {
             steps {
                 echo "Testing deployment..."
-                sh 'curl 192.168.49.2:30110'
+                sh 'curl 98.81.171.87:30110'
             }
         }
     }
