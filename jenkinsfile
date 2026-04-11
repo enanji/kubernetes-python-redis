@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         APP_ENV    = 'uat'
-        IMAGE_NAME = 'mbahafru/py-feb27'
+        IMAGE_NAME = 'beniko123/py-feb27'
         
     }
 
@@ -57,8 +57,8 @@ pipeline {
             }
         }
 
-        stage('Kube Testing') { 
-            agent { label 'kube' }
+        stage('Kube Testing') {
+            agent { label 'kubernetes' }
 
             steps {
                 echo "Checking Kubernetes pods..."
@@ -66,11 +66,13 @@ pipeline {
             }
         }
         stage('Deploy - Template and Apply') {
-             agent { label 'kube' }
+             agent { label 'kubernetes' }
+
+
         steps {
-            sh '''
-        export IMAGE_TAG=TAG=${BUILD_NUMBER}
-        kubectl apply -f .
+sh '''
+        export IMAGE_TAG=${BUILD_NUMBER}
+
         envsubst < configmap.yaml | kubectl apply -f -
         kubectl apply -f redis-deploy.yaml
         kubectl apply -f redis-service.yaml
@@ -79,12 +81,12 @@ pipeline {
 
         kubectl rollout status deployment/py-deploy
         '''
-           
         }
     }
 
         stage('Deploy to Kubernetes') {
-             agent { label 'kube' }
+             agent { label 'kubernetes' }
+
             steps {
                 echo "Deploying to Kubernetes..."
            
