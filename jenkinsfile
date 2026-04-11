@@ -32,7 +32,7 @@ pipeline {
             steps {
                 echo 'Logging into Docker Hub...'
                 withCredentials([usernamePassword(
-                    credentialsId: 'docker-repo-cred',
+                    credentialsId: 'kube-master-cred',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
