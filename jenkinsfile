@@ -69,10 +69,17 @@ pipeline {
              agent { label 'kube' }
         steps {
             sh '''
-            export IMAGE_TAG=$BUILD_NUMBER
-            envsubst < py-deploy.yaml | kubectl apply -f -
-            kubectl rollout status deployment/py-deploy
-            '''
+        export IMAGE_TAG=TAG=${BUILD_NUMBER}
+        kubectl apply -f .
+        envsubst < configmap.yaml | kubectl apply -f -
+        kubectl apply -f redis-deploy.yaml
+        kubectl apply -f redis-service.yaml
+        envsubst < py-deploy.yaml | kubectl apply -f -
+        kubectl apply -f py-service.yaml
+
+        kubectl rollout status deployment/py-deploy
+        '''
+           
         }
     }
 
@@ -90,7 +97,7 @@ pipeline {
         stage('Test Deployment') {
             steps {
                 echo "Testing deployment..."
-                sh 'curl 98.81.171.87:30110'
+                sh 'curl 54.198.92.209:30110'
             }
         }
     }
