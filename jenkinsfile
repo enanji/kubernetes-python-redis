@@ -58,7 +58,7 @@ pipeline {
         }
 
         stage('Kube Testing') {
-            agent { label 'kubernetes' }
+            agent { label 'kube' }
 
             steps {
                 echo "Checking Kubernetes pods..."
@@ -66,7 +66,7 @@ pipeline {
             }
         }
         stage('Deploy - Template and Apply') {
-             agent { label 'kubernetes' }
+             agent { label 'kube' }
 
 
         steps {
@@ -85,7 +85,7 @@ sh '''
     }
 
         stage('Deploy to Kubernetes') {
-             agent { label 'kubernetes' }
+             agent { label 'kube' }
 
             steps {
                 echo "Deploying to Kubernetes..."
